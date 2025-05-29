@@ -13,7 +13,10 @@ jobs:
   build-java: # ten job, co the thay doi ten
 
     runs-on: ubuntu-latest # chay tren he dieu hanh ubuntu moi nhat
-    
+    strategy:
+      matrix:  # chay tren nhieu he dieu hanh khac nhau
+        os: [ ubuntu-latest, windows-latest, macOS-latest] 
+
     steps: 
     - uses: actions/checkout@v2 #  (checkout) code trong repository ve may chay workflow nay
       with:
@@ -32,11 +35,9 @@ jobs:
     - name: Build with Gradle # chay lenh gradlew build de xay dung du an
       run: ./gradlew build
 
-    - name: Build and Push Docker Image # xay dung va day image Docker len Docker Hub
-      uses: mr-smithers-excellent/docker-build-push@v4 # su dung action docker-build-push de xay dung va day image Docker
-      with:
-        image: nanajanashia/demo-app #ten image
-        registry: docker.io # dia chi cua Docker Hub
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-         
+  publish: # Đây là tên của job mới (hợp lệ)
+    needs: build-java # job này phụ thuộc vào build-java chạy xong
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo publishing step
+        run: echo "Đây là bước publish, cần bạn cấu hình thêm tùy ý" 
